@@ -2,349 +2,706 @@ const Engine = Matter.Engine;
 const Bodies = Matter.Bodies;
 const Composite = Matter.Composite;
 const Body = Matter.Body;
+const Constraint = Matter.Constraint;
 
-// 엔진 객체 생성
 let engine;
 
-//地板
+// 左上
+let yellowBox;
+
+// 上中
+let pinkTriangle;
+let purpleBall;
+
+// 右上
+let blueHexagon;
+
+// 左边
+let orangeBox;
+let blueBall;
+let greenTriangle;
+
+// 中间
+let cyanBall;
+let purpleBar;
+let blueTriangle;
+
+// 右边
+let yellowBar;
+let greenBall;
+let pinkHexagon;
+let orangeHexagon;
+
+//透明墙
 let ground;
+let topWall;
+let leftWall;
 let rightWall;
 
-//固定物体
-let brownBar1;
-let brownBar3;
-let brownBar2;
-let redBar;
-let redBox;
-let cyanBar;
-let cyanBar2;
-
-//球
-let redBall;
-let orangeBall;
-let blueBall;
-
+//固定轴
+let yellowBoxConstraint;
+let pinkTriangleConstraint;
+let blueHexagonConstraint;
+let greenTriangleConstraint;
+let purpleBarConstraint;
+let blueTriangleConstraint;
+let yellowBarConstraint;
+let pinkHexagonConstraint;
+let orangeHexagonConstraint;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   rectMode(CENTER);
   noStroke();
 
-  // Matter setting
+  // Matter.js 物理引擎
   engine = Engine.create();
 
+  //关闭重力
+  engine.gravity.x = 0;
+  engine.gravity.y = 0;
 
-  // 1. Brown Bar 1 左中
+  // 1. 左上黄色正方形
 
-  brownBar1 = Bodies.rectangle(
-    width / 2 - 215,
-    height / 2 - 35,
-    430,
-    35,
+  yellowBox = Bodies.rectangle(
+    width / 2 - 300,
+    height / 2 - 310,
+    180,
+    180,
     {
       isStatic: true,
+      frictionAir: 0,
     }
   );
 
-  Body.setAngle(brownBar1, radians(45));
+  //黄色正方体的轴
+  yellowBoxConstraint = Constraint.create({
+    pointA: {
+      x: width / 2 - 300,
+      y: height / 2 - 310,
+    },
+    bodyB: yellowBox,
+    pointB: {
+      x: 0,
+      y: 0,
+    },
+    length: 0,
+    stiffness: 1,
+  });
 
+  // 转45度
+  Body.setAngle(yellowBox, radians(45));
 
-  // 1.5. Brown Bar 3 左上
+  //给旋转速度
+  Body.setAngularVelocity(yellowBox, 0.03);
 
-  brownBar3 = Bodies.rectangle(
-    width / 2 - 150,
-    height / 2 - 270,
-    480,
-    35,
-    {
-      isStatic: true,
-    }
-  );
+  // 2. 上方粉色三角形
 
-  Body.setAngle(brownBar3, radians(45));
-
-
-  // 2. Brown Bar 2 左下
-
-  brownBar2 = Bodies.rectangle(
-    width / 2 - 170,
-    height / 2 + 300,
-    430,
-    35,
-    {
-      isStatic: true,
-    }
-  );
-
-  Body.setAngle(brownBar2, radians(-45));
-
-
-  // 3. Red Bar 酒红色细长斜杆
-
-  redBar = Bodies.rectangle(
-    width / 2 + 55,
-    height / 2 - 165,
-    600,
-    28,
-    {
-      isStatic: false,
-      friction: 0.8,
-    }
-  );
-
-  Body.setAngle(redBar, radians(-45));
-
-
-  // 4. Red Big Box 中间的大酒红方块
-
-  redBox = Bodies.rectangle(
-    width / 2,
-    height / 2 + 20,
-    160,
-    240,
-    {
-      isStatic: false,
-      friction: 0.8,
-    }
-  );
-
-  Body.setAngle(redBox, radians(45));
-
-
-  // 5. Cyan Bar下面的青色杆
-
-  cyanBar = Bodies.rectangle(
-    width / 2 + 60,
-    height / 2 + 270,
-    280,
-    50,
-    {
-      isStatic: false,
-    }
-  );
-
-  Body.setAngle(cyanBar, radians(45));
-
-
-  // 5.5. Cyan Bar2下面的青色杆2
-
-  cyanBar2 = Bodies.rectangle(
+  pinkTriangle = Bodies.fromVertices(
     width / 2 - 20,
-    height / 2 + 270,
-    280,
-    50,
-    {
-      isStatic: true,
-    }
-  );
-
-  Body.setAngle(cyanBar2, radians(45));
-
-
-  // 6. Red Ball左上酒红圆
-
-  redBall = Bodies.circle(
-    width / 2 - 95,
-    height / 2 - 110,
-    55,
+    height / 2 - 250,
+    [
+      { x: 0, y: 0 },
+      { x: 300, y: 0 },
+      { x: 0, y: 250 },
+    ],
     {
       isStatic: false,
-      friction: 0.8,
-      frictionAir: 0.02,
-density: 0.005,
+      frictionAir: 0,
     }
   );
 
+  //转90度
+  Body.setAngle(pinkTriangle, radians(-90));
 
-  // 7. Orange Ball 上方橙色圆
+  //粉色三角形的中心轴
+  pinkTriangleConstraint = Constraint.create({
+    pointA: {
+      x: pinkTriangle.position.x,
+      y: pinkTriangle.position.y,
+    },
+    bodyB: pinkTriangle,
+    pointB: {
+      x: 0,
+      y: 0,
+    },
+    length: 0,
+    stiffness: 1,
+  });
 
-orangeBall = Bodies.circle(
-  width / 2 + 5,
-  height / 2 - 215,
-  55,
-  {
-    isStatic: false,
-    friction: 0.8,
-  }
-);
+  //绕中心向左转
+  Body.setAngularVelocity(pinkTriangle, -0.03);
 
-//给橙色球一个向右的速度
-Body.setVelocity(orangeBall, {
-  x: -14,
-  y: 0,
-});
+  // 3. 上方紫色小球
 
-
-  // 8. Blue Ball右下蓝色圆
-
-  blueBall = Bodies.circle(
+  purpleBall = Bodies.circle(
     width / 2 + 60,
-    height / 2 + 150,
-    55,
+    height / 2 - 400,
+    65,
     {
       isStatic: false,
-      friction: 0.8,
+      restitution: 0.9,
+      frictionAir: 0,
     }
   );
 
+  //给速度
+  Body.setVelocity(purpleBall, { x: -2, y: 2 });
 
-  //地板
+  // 4. 右上蓝色六边形
 
-  ground = Bodies.rectangle(
-    width / 2,
-    height + 10,
-    width + 200,
-    40,
+  blueHexagon = Bodies.polygon(
+    width / 2 + 320,
+    height / 2 - 300,
+    6,
+    125,
     {
-      isStatic: true,
+      isStatic: false,
+      frictionAir: 0,
     }
   );
 
+  //蓝色六边形的中心轴
+  blueHexagonConstraint = Constraint.create({
+    pointA: {
+      x: blueHexagon.position.x,
+      y: blueHexagon.position.y,
+    },
+    bodyB: blueHexagon,
+    pointB: {
+      x: 0,
+      y: 0,
+    },
+    length: 0,
+    stiffness: 1,
+  });
 
-  //右墙
+  //向左转
+  Body.setAngularVelocity(blueHexagon, -0.05);
 
-  rightWall = Bodies.rectangle(
-    width / 2 + 380,
-    height / 2 + 330,
-    40,
+  // 5. 左边橙色长方形
+
+  orangeBox = Bodies.rectangle(
+    width / 2 - 330,
+    height / 2 - 30,
+    140,
     220,
     {
+      isStatic: false,
+      frictionAir: 0,
+    }
+  );
+
+  //速度
+  Body.setVelocity(orangeBox, { x: 1, y: 0 });
+
+
+  // 6. 左下蓝色球
+
+  blueBall = Bodies.circle(
+    width / 2 - 330,
+    height / 2 + 150,
+    70,
+    {
+      isStatic: false,
+      restitution: 0.9,
+      frictionAir: 0,
+    }
+  );
+
+  //给速度
+  Body.setVelocity(blueBall, { x: 2, y: -2 });
+
+  // 7. 左下绿色倒三角
+
+  greenTriangle = Bodies.polygon(
+    width / 2 - 330,
+    height / 2 + 330,
+    3,
+    150,
+    {
+      isStatic: false,
+      frictionAir: 0,
+    }
+  );
+
+  // 旋转
+  Body.setAngle(greenTriangle, radians(150));
+
+  //绿色三角形的中心轴
+  greenTriangleConstraint = Constraint.create({
+    pointA: {
+      x: greenTriangle.position.x,
+      y: greenTriangle.position.y,
+    },
+    bodyB: greenTriangle,
+    pointB: {
+      x: 0,
+      y: 0,
+    },
+    length: 0,
+    stiffness: 1,
+  });
+
+  //绕中心转
+  Body.setAngularVelocity(greenTriangle, 0.02);
+
+  // 8. 中间青色大球
+
+  cyanBall = Bodies.circle(
+    width / 2,
+    height / 2 - 30,
+    95,
+    {
+      isStatic: false,
+      restitution: 0.9,
+      frictionAir: 0,
+    }
+  );
+
+  //给速度
+  Body.setVelocity(cyanBall, { x: 2, y: -1 });
+
+  // 9. 中间紫色横杆
+
+  purpleBar = Bodies.rectangle(
+    width / 2,
+    height / 2 + 100,
+    270,
+    65,
+    {
+      isStatic: false,
+      frictionAir: 0,
+    }
+  );
+
+  //紫色横杆的中心轴
+  purpleBarConstraint = Constraint.create({
+    pointA: {
+      x: purpleBar.position.x,
+      y: purpleBar.position.y,
+    },
+    bodyB: purpleBar,
+    pointB: {
+      x: 0,
+      y: 0,
+    },
+    length: 0,
+    stiffness: 1,
+  });
+
+  //给旋转速度
+  Body.setAngularVelocity(purpleBar, 0.03);
+
+  // 10. 中下蓝色三角形
+
+  blueTriangle = Bodies.polygon(
+    width / 2,
+    height / 2 + 325,
+    3,
+    190,
+    {
+      isStatic: false,
+      frictionAir: 0,
+    }
+  );
+
+  Body.setAngle(blueTriangle, radians(-30));
+
+  //蓝色三角形的中心轴
+  blueTriangleConstraint = Constraint.create({
+    pointA: {
+      x: blueTriangle.position.x,
+      y: blueTriangle.position.y,
+    },
+    bodyB: blueTriangle,
+    pointB: {
+      x: 0,
+      y: 0,
+    },
+    length: 0,
+    stiffness: 1,
+  });
+
+  //绕中心向左转
+  Body.setAngularVelocity(blueTriangle, -0.025);
+
+  // 11. 右边黄色斜杆
+
+  yellowBar = Bodies.rectangle(
+    width / 2 + 320,
+    height / 2 - 40,
+    250,
+    35,
+    {
+      isStatic: false,
+      frictionAir: 0,
+    }
+  );
+
+  Body.setAngle(yellowBar, radians(-45));
+
+  //黄色斜杆的中心轴
+  yellowBarConstraint = Constraint.create({
+    pointA: {
+      x: yellowBar.position.x,
+      y: yellowBar.position.y,
+    },
+    bodyB: yellowBar,
+    pointB: {
+      x: 0,
+      y: 0,
+    },
+    length: 0,
+    stiffness: 1,
+  });
+
+  //绕中心向左转
+  Body.setAngularVelocity(yellowBar, -0.03);
+
+  // 12. 右边绿色球
+
+  greenBall = Bodies.circle(
+    width / 2 + 390,
+    height / 2 + 20,
+    65,
+    {
+      isStatic: false,
+      restitution: 0.9,
+      frictionAir: 0,
+    }
+  );
+
+  //给速度
+  Body.setVelocity(greenBall, { x: -2, y: 1 });
+
+  // 13. 右边粉色多边形
+
+  pinkHexagon = Bodies.polygon(
+    width / 2 + 250,
+    height / 2 + 200,
+    6,
+    80,
+    {
+      isStatic: false,
+      frictionAir: 0,
+    }
+  );
+
+  //粉色多边形的中心轴
+  pinkHexagonConstraint = Constraint.create({
+    pointA: {
+      x: pinkHexagon.position.x,
+      y: pinkHexagon.position.y,
+    },
+    bodyB: pinkHexagon,
+    pointB: {
+      x: 0,
+      y: 0,
+    },
+    length: 0,
+    stiffness: 1,
+  });
+
+  //绕中心向左转
+  Body.setAngularVelocity(pinkHexagon, 0.03);
+
+  // 14. 右下橙色多边形
+
+  orangeHexagon = Bodies.polygon(
+    width / 2 + 380,
+    height / 2 + 300,
+    5,
+    100,
+    {
+      isStatic: false,
+      frictionAir: 0,
+    }
+  );
+
+  //橙色多边形的中心轴
+  orangeHexagonConstraint = Constraint.create({
+    pointA: {
+      x: orangeHexagon.position.x,
+      y: orangeHexagon.position.y,
+    },
+    bodyB: orangeHexagon,
+    pointB: {
+      x: 0,
+      y: 0,
+    },
+    length: 0,
+    stiffness: 1,
+  });
+
+  //也绕中心向左转
+  Body.setAngularVelocity(orangeHexagon, -0.025);
+
+  // 四面透明墙
+
+  // 下墙
+  ground = Bodies.rectangle(
+    width / 2,
+    height + 20,
+    width,
+    40,
+    {
       isStatic: true,
     }
   );
 
-  Body.setAngle(rightWall, radians(30));
+  // 上墙
+  topWall = Bodies.rectangle(
+    width / 2,
+    -20,
+    width,
+    40,
+    {
+      isStatic: true,
+    }
+  );
 
+  // 左墙
+  leftWall = Bodies.rectangle(
+    -20,
+    height / 2,
+    40,
+    height,
+    {
+      isStatic: true,
+    }
+  );
 
-  // 全部加入物理世界
+  // 右墙
+  rightWall = Bodies.rectangle(
+    width + 20,
+    height / 2,
+    40,
+    height,
+    {
+      isStatic: true,
+    }
+  );
+
+  // 全部加入 Matter 世界
 
   Composite.add(engine.world, [
-    brownBar1,
-    brownBar3,
-    brownBar2,
-    redBar,
-    redBox,
-    cyanBar,
-    cyanBar2,
-    redBall,
-    orangeBall,
+    yellowBox,
+
+    pinkTriangle,
+    purpleBall,
+
+    blueHexagon,
+
+    orangeBox,
     blueBall,
+    greenTriangle,
+
+    cyanBall,
+    purpleBar,
+    blueTriangle,
+
+    yellowBar,
+    greenBall,
+    pinkHexagon,
+    orangeHexagon,
+
     ground,
+    topWall,
+    leftWall,
     rightWall,
+
+    yellowBoxConstraint,
+    pinkTriangleConstraint,
+    blueHexagonConstraint,
+    greenTriangleConstraint,
+    purpleBarConstraint,
+    blueTriangleConstraint,
+    yellowBarConstraint,
+    pinkHexagonConstraint,
+    orangeHexagonConstraint,
   ]);
 }
 
-
-
 function draw() {
-  background("#F3E1CC");
-
-  //用matter引擎加载每一帧的物理世界
+  // 黄色背景
+  background("#EAEA17");
 
   Engine.update(engine);
 
-
-  // Brown Bar 1
-
-  push();
-  fill("#6B4A2F");
-  translate(brownBar1.position.x, brownBar1.position.y);
-  rotate(brownBar1.angle);
-  rect(0, 0, 430, 35);
-  pop();
-
-
-  // Brown Bar 3
+  // 黄色正方形
 
   push();
-  fill("#6B4A2F");
-  translate(brownBar3.position.x, brownBar3.position.y);
-  rotate(brownBar3.angle);
-  rect(0, 0, 480, 35);
+  fill("#FFBE17");
+  translate(
+    yellowBox.position.x,
+    yellowBox.position.y
+  );
+  rotate(yellowBox.angle);
+  rect(0, 0, 180, 180);
   pop();
 
+  // 粉色三角形
 
-  // Brown Bar 2
+  fill("#EF3D73");
 
-  push();
-  fill("#6B4A2F");
-  translate(brownBar2.position.x, brownBar2.position.y);
-  rotate(brownBar2.angle);
-  rect(0, 0, 430, 35);
-  pop();
+  beginShape();
 
+  for (let v of pinkTriangle.vertices) {
+    vertex(v.x, v.y);
+  }
 
-  // Red Bar
+  endShape(CLOSE);
 
-  push();
-  fill("#7A0B00");
-  translate(redBar.position.x, redBar.position.y);
-  rotate(redBar.angle);
-  rect(0, 0, 600, 28);
-  pop();
+  // 紫色球
 
+  fill("#A9419B");
 
-  // Red Big Box
-
-  push();
-  fill("#7A0B00");
-  translate(redBox.position.x, redBox.position.y);
-  rotate(redBox.angle);
-  rect(0, 0, 160, 240);
-  pop();
-
-
-  // Cyan Bar
-
-  push();
-  fill("#5CE1E6");
-  translate(cyanBar.position.x, cyanBar.position.y);
-  rotate(cyanBar.angle);
-  rect(0, 0, 280, 50);
-  pop();
-
-
-  // Cyan Bar2
-
-  push();
-  fill("#5CE1E6");
-  translate(cyanBar2.position.x, cyanBar2.position.y);
-  rotate(cyanBar2.angle);
-  rect(0, 0, 280, 50);
-  pop();
-
-
-  // Red Ball
-
-  fill("#7A0B00");
   circle(
-    redBall.position.x,
-    redBall.position.y,
-    110
+    purpleBall.position.x,
+    purpleBall.position.y,
+    130
   );
 
+  // 蓝色六边形
 
-  // Orange Ball
+  fill("#405AF2");
 
-  fill("#FF8A00");
-  circle(
-    orangeBall.position.x,
-    orangeBall.position.y,
-    110
+  beginShape();
+
+  for (let v of blueHexagon.vertices) {
+    vertex(v.x, v.y);
+  }
+
+  endShape(CLOSE);
+
+  // 左边橙色长方形
+
+  push();
+  fill("#F45D2C");
+
+  translate(
+    orangeBox.position.x,
+    orangeBox.position.y
   );
 
+  rotate(orangeBox.angle);
 
-  // Blue Ball
+  rect(0, 0, 140, 220);
 
-  fill("#285BF5");
+  pop();
+
+  // 左下蓝色球
+
+  fill("#405AF2");
+
   circle(
     blueBall.position.x,
     blueBall.position.y,
-    110
+    140
   );
 
+  // 左下绿色三角形
 
-  //右墙
-  //现在不画出来
-  //Matter里面存在，但是画面里看不到
+  fill("#13B68A");
+
+  beginShape();
+
+  for (let v of greenTriangle.vertices) {
+    vertex(v.x, v.y);
+  }
+
+  endShape(CLOSE);
+
+  // 中间青色大球
+
+
+  fill("#55BDE4");
+
+  circle(
+    cyanBall.position.x,
+    cyanBall.position.y,
+    190
+  );
+
+  // 中间紫色横杆
+
+  push();
+
+  fill("#A9419B");
+
+  translate(
+    purpleBar.position.x,
+    purpleBar.position.y
+  );
+
+  rotate(purpleBar.angle);
+
+  rect(0, 0, 270, 65);
+
+  pop();
+
+  // 中下蓝色三角形
+
+  fill("#405AF2");
+
+  beginShape();
+
+  for (let v of blueTriangle.vertices) {
+    vertex(v.x, v.y);
+  }
+
+  endShape(CLOSE);
+
+  // 右边黄色斜杆
+
+  push();
+
+  fill("#FFBE17");
+
+  translate(
+    yellowBar.position.x,
+    yellowBar.position.y
+  );
+
+  rotate(yellowBar.angle);
+
+  rect(0, 0, 250, 35);
+
+  pop();
+
+  // 右边绿色球
+
+  fill("#13B68A");
+
+  circle(
+    greenBall.position.x,
+    greenBall.position.y,
+    130
+  );
+
+  // 右边粉色多边形
+
+  fill("#EF3D73");
+
+  beginShape();
+
+  for (let v of pinkHexagon.vertices) {
+    vertex(v.x, v.y);
+  }
+
+  endShape(CLOSE);
+
+  // 右下橙色多边形
+
+  fill("#F45D2C");
+
+  beginShape();
+
+  for (let v of orangeHexagon.vertices) {
+    vertex(v.x, v.y);
+  }
+
+  endShape(CLOSE);
+
 }
